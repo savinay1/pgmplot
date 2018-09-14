@@ -2,7 +2,7 @@ from pgmpy.factors.discrete import TabularCPD
 from pgmpy.models import BayesianModel
 from pgmpy.factors import factor_product
 from pgmpy.inference.base import Inference
-import numpy as np
+import numpy as np 
 import pandas as pd
 import itertools
 import json
