@@ -2,33 +2,37 @@ from pgmpy.factors.discrete import TabularCPD
 from pgmpy.models import BayesianModel
 from pgmpy.factors import factor_product
 from pgmpy.inference.base import Inference
-import numpy as np 
+import json
+import pickle
+import os
+import numpy as np
 import pandas as pd
 import itertools
 import json
 import pickle
 
-
 def list():
     '''
     Returns all models
     '''
-    filename = './examples/data/model.json'
-    with open(filename, 'r') as f:
-        data = json.load(f)
+    model_list = os.listdir('./examples/models')
 
-    return data
+    for i, x in enumerate(model_list):
+        model_list[i] = x.split('.')[0]
+
+    return json.dumps({'list': model_list})
 
 
 def model_present(model_name):
     '''
     checks a model present or not
     '''
-    filename = './examples/data/model.json'
-    with open(filename, 'r') as f:
-        data = json.load(f)
 
-    model_list = data["list"]
+    model_list = os.listdir('./examples/models')
+
+    for i, x in enumerate(model_list):
+        model_list[i] = x.split('.')[0]
+
     if model_name in model_list:
         return True
     else:
@@ -54,11 +58,11 @@ def describe(model_name):
 
 
     root = []
-    for x in model.in_degree():
+    for x in model.in_degree:
         if x[1] == 0:
             root.append(x[0])
     leaf = []
-    for x in model.out_degree():
+    for x in model.out_degree:
         if x[1] == 0:
             leaf.append(x[0])
 
@@ -128,8 +132,6 @@ def describe(model_name):
 
     return ("The "+model_name +" model "  " has "+str(Root).strip('[]')+" as " +op1+ " and "+str(Leaf).strip('[]')+" as "+op+". " +s+s2)
 
-
-
 def infer(model_name,output_node,observe):
     '''description: query the given bayesian model
     Parameters
@@ -175,11 +177,13 @@ def infer(model_name,output_node,observe):
         if m[node]==output_node:
             outp_nde=node
 
+
+
     # giving evidence (array of tuples)
     evidence_array =observe.items()
     # infer object
     infer = SimpleInference(model)
-    # working for only one evidence
+
     result = infer.query(var=outp_nde, evidence=evidence_array).values[1]
 
     output_value={'outp_v':str(result)}
