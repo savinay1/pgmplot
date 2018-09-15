@@ -189,5 +189,3 @@ def infer(model_name,output_node,observe):
     output_value={'outp_v':str(result)}
 
     return (json.dumps(output_value))
-
-print(infer("student","Letter of Recommendation",{"Grade":1,"SAT Scores":0}))
