@@ -2,6 +2,7 @@ from pgmpy.factors.discrete import TabularCPD
 from pgmpy.models import BayesianModel
 from pgmpy.factors import factor_product
 from pgmpy.inference.base import Inference
+from pgmpy.inference import VariableElimination
 import json
 import pickle
 import os
@@ -182,10 +183,11 @@ def infer(model_name,output_node,observe):
     # giving evidence (array of tuples)
     evidence_array =observe.items()
     # infer object
-    infer = SimpleInference(model)
+    #infer = SimpleInference(model)
+    infer = VariableElimination(model)
 
-    result = infer.query(var=outp_nde, evidence=evidence_array).values[1]
+    result = infer.query(variables=[outp_nde], evidence=observe)
 
-    output_value={'outp_v':str(result)}
+    output_value={'outp_v':str(result[outp_nde].values[1])}
 
     return (json.dumps(output_value))
