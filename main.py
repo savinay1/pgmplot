@@ -1,7 +1,6 @@
 from pgmpy.factors.discrete import TabularCPD
 from pgmpy.models import BayesianModel
 from pgmpy.factors import factor_product
-from pgmpy.inference.base import Inference
 from pgmpy.inference import VariableElimination
 import json
 import pickle
@@ -140,17 +139,7 @@ def infer(model_name,output_node,observe):
         model: pgmpy Bayesian Object
         returns: result of the given query
     '''
-    class SimpleInference(Inference):
-        ''' custom inference'''
-        def query(self, var, evidence):
-            # self.factors is a dict of the form of {node: [factors_involving_node]}
-            factors_list = set(itertools.chain(*self.factors.values()))
-            product = factor_product(*factors_list)
-            reduced_prod = product.reduce(evidence, inplace=False)
-            reduced_prod.normalize()
-            var_to_marg = set(self.model.nodes()) - set(var) - set([state[0] for state in evidence])
-            marg_prod = reduced_prod.marginalize(var_to_marg, inplace=False)
-            return marg_prod
+
 
     if not model_present(model_name):
         return "Model not found"
@@ -183,7 +172,6 @@ def infer(model_name,output_node,observe):
     # giving evidence (array of tuples)
     evidence_array =observe.items()
     # infer object
-    #infer = SimpleInference(model)
     infer = VariableElimination(model)
 
     result = infer.query(variables=[outp_nde], evidence=observe)
