@@ -167,10 +167,6 @@ def infer(model_name,output_node,observe):
         if m[node]==output_node:
             outp_nde=node
 
-
-
-    # giving evidence (array of tuples)
-    evidence_array =observe.items()
     # infer object
     infer = VariableElimination(model)
 
